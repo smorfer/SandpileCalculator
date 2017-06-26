@@ -1,5 +1,5 @@
 /**
- * Created by Nicolas on 14.01.2017.
+ * GridBoundary is the outer layer of the sandpile grid, thus voiding sand it's recieving.
  */
 public class GridBoundary extends GridObject {
     @Override

@@ -1,5 +1,6 @@
 /**
- * Created by Nicolas on 14.01.2017.
+ * Represents the inner layer of the sandpile grid and connects to his four neighbours,
+ *
  */
 public class Sandpile extends  GridObject{
     private int sandpile;
