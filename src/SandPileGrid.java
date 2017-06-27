@@ -11,6 +11,7 @@ public class SandPileGrid {
 
     Sandpile[] sandpiles;
 
+    @Deprecated
     public SandPileGrid(int ul,int um,int ur,int ml,int mm,int mr, int dl, int dm, int dr) {
         uplft = new Sandpile(ul);
         upmid = new Sandpile(um);
@@ -35,6 +36,38 @@ public class SandPileGrid {
         sandpiles = new Sandpile[]{uplft,upmid,uprght,midlft,midmid,midrght,dwnlft,dwnmid,dwnrght};
     }
 
+    public SandPileGrid(int sideLength, int fill){
+        sandpiles = new Sandpile[(int)Math.pow(sideLength,2)];
+        for (int i = 0;i < sandpiles.length; i++){
+            sandpiles[i] = new Sandpile(fill);
+        }
+        for (int i = 0;i < sandpiles.length; i++){
+            if (i == 0) {
+                sandpiles[i].setRelations(new GridBoundary(),sandpiles[sideLength],sandpiles[i+1],new GridBoundary());
+            }
+            else if (i < sideLength-1){
+                sandpiles[i].setRelations(new GridBoundary(),sandpiles[i+sideLength],sandpiles[i+1],sandpiles[i-1]);
+            }
+            else if ((i+1) % sideLength == 0) {
+                if ((i+1)==Math.pow(sideLength,2)) sandpiles[i].setRelations(sandpiles[i - sideLength], new GridBoundary(), new GridBoundary(), sandpiles[i - 1]);
+                else if (i+1 == sideLength) sandpiles[i].setRelations(new GridBoundary(),sandpiles[i+sideLength],new GridBoundary(),sandpiles[i-1]);
+                else sandpiles[i].setRelations(sandpiles[i-sideLength],sandpiles[i+sideLength],new GridBoundary(),sandpiles[i-1]);
+            }
+            else if (i % sideLength == 0){
+                if (i + sideLength == Math.pow(sideLength,2)) sandpiles[i].setRelations(sandpiles[i-sideLength],new GridBoundary(),sandpiles[i+1],new GridBoundary());
+                else sandpiles[i].setRelations(sandpiles[i-sideLength],sandpiles[i+sideLength],sandpiles[i+1],new GridBoundary());
+            }
+            else if (i < Math.pow(sideLength,2)&& i > Math.pow(sideLength,2)-sideLength) {
+                sandpiles[i].setRelations(sandpiles[i-sideLength],new GridBoundary(),sandpiles[i+1],sandpiles[i-1]);
+            }
+            else {
+                sandpiles[i].setRelations(sandpiles[i-sideLength],sandpiles[i+sideLength],sandpiles[i+1],sandpiles[i-1]);
+            }
+        }
+
+    }
+
+
     public void tobble(){
         for(Sandpile s : sandpiles){
             if(s.checkOverflow()){
@@ -52,15 +85,16 @@ public class SandPileGrid {
     }
 
     public void addPile(SandPileGrid sandPileGrid){
-        for(int i = 0; i < 9; i++){
+        for(int i = 0; i < sandpiles.length; i++){
             this.sandpiles[i].setSandpile(sandpiles[i].getSandpile() + sandPileGrid.sandpiles[i].getSandpile());
         }
         display();
     }
 
     public void display(){
-        System.out.println(uplft.getSandpile() + "    " + upmid.getSandpile() + "    " + uprght.getSandpile() + "\n");
-        System.out.println(midlft.getSandpile() + "    " + midmid.getSandpile() + "    " + midrght.getSandpile() + "\n");
-        System.out.println(dwnlft.getSandpile() + "    " + dwnmid.getSandpile() + "    " + dwnrght.getSandpile() + "\n \n");
+        for(Sandpile s : sandpiles){
+            System.out.print(s.getSandpile() + " ");
+        }
+        System.out.println();
     }
 }
