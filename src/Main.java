@@ -6,8 +6,9 @@
  */
 public class Main {
     public static void main(String[] args) {
-        SandPileGrid sandPileGrid = new SandPileGrid(3,3);
-        sandPileGrid.addPile(new SandPileGrid(3,1));
+        SandPileGrid sandPileGrid = new SandPileGrid(2,0);
+        sandPileGrid.setPiles();
+        sandPileGrid.addPile(new SandPileGrid(2,2));
         sandPileGrid.tobble();
     }
 }

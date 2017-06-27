@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 /**
  * The handler class of the Sandpilegrid.
  * Is the part of the Program, the Main class interacts with.
@@ -10,6 +12,7 @@ public class SandPileGrid {
     Sandpile dwnlft,dwnmid,dwnrght;
 
     Sandpile[] sandpiles;
+    int sidelength;
 
     @Deprecated
     public SandPileGrid(int ul,int um,int ur,int ml,int mm,int mr, int dl, int dm, int dr) {
@@ -37,6 +40,7 @@ public class SandPileGrid {
     }
 
     public SandPileGrid(int sideLength, int fill){
+        this.sidelength = sideLength;
         sandpiles = new Sandpile[(int)Math.pow(sideLength,2)];
         for (int i = 0;i < sandpiles.length; i++){
             sandpiles[i] = new Sandpile(fill);
@@ -74,11 +78,6 @@ public class SandPileGrid {
                 s.collapse();
                 display();
                 tobble();
-                try{
-                    Thread.sleep(1000);
-                }catch(InterruptedException ie){
-                    ie.printStackTrace();
-                }
                 break;
             }
         }
@@ -91,9 +90,25 @@ public class SandPileGrid {
         display();
     }
 
+    public void setPiles(){
+        Scanner scannerIn = new Scanner(System.in);
+        for (int i = 0; i < sandpiles.length;i++){
+            if ((i+1) % sidelength == 0){
+                sandpiles[i].setSandpile(scannerIn.nextInt());
+                System.out.println();
+            }else {
+                sandpiles[i].setSandpile(scannerIn.nextInt());
+            }
+        }
+    }
+
     public void display(){
-        for(Sandpile s : sandpiles){
-            System.out.print(s.getSandpile() + " ");
+        for (int i = 0; i < sandpiles.length;i++){
+            if ((i+1) % sidelength == 0){
+                System.out.println(sandpiles[i].getSandpile() + "\n");
+            }else {
+                System.out.print(sandpiles[i].getSandpile() + "\t");
+            }
         }
         System.out.println();
     }
