@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -71,16 +72,29 @@ public class SandPileGrid {
 
     }
 
-
     public void tobble(){
+        tobblePrioritized(checkGridOverflow());
+    }
+
+    public ArrayList<Sandpile> checkGridOverflow(){
+        ArrayList<Sandpile> overflowing = new ArrayList<>();
         for(Sandpile s : sandpiles){
-            if(s.checkOverflow()){
-                s.collapse();
-                display();
-                tobble();
-                break;
+            if (s.checkOverflow()){
+                overflowing.add(s);
             }
         }
+        return overflowing;
+    }
+
+    private void tobblePrioritized(ArrayList<Sandpile> overflowing){
+        if(!overflowing.isEmpty()){
+            for (Sandpile s : overflowing){
+                s.collapse();
+            }
+            display();
+            tobblePrioritized(checkGridOverflow());
+        }
+
     }
 
     public void addPile(SandPileGrid sandPileGrid){
