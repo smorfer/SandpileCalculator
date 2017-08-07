@@ -1,3 +1,5 @@
+package core;
+
 /**
  * GridBoundary is the outer layer of the sandpile grid, thus voiding sand it's recieving.
  */

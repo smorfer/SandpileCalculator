@@ -1,3 +1,5 @@
+package core;
+
 /**
  * Abstract class for the Sandpiles and the Gridboundaries.
  * Is used so the collapse method can be applied, independend of the Class,

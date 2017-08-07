@@ -1,3 +1,5 @@
+package core;
+
 /**
  * Represents the inner layer of the sandpile grid and connects to his four neighbours,
  *

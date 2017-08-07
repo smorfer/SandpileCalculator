@@ -1,3 +1,5 @@
+package core;
+
 /**
  * Executing class of the program.
  * Simulates the behaviour of Sandpilegrids.
