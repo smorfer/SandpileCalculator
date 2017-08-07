@@ -116,6 +116,7 @@ public class SandPileGrid {
                 sandpiles[i].setSandpile(scannerIn.nextInt());
             }
         }
+        scannerIn.close();
     }
 
     public void display(){
