@@ -120,7 +120,11 @@ public class SandPileGrid {
     }
 
     public void setPile(int col, int row, int amount){
-        sandpiles[col+(sidelength*row)].setSandpile(amount);
+        try {
+            sandpiles[col+(sidelength*row)].setSandpile(amount);
+        }catch (ArrayIndexOutOfBoundsException e){
+            System.out.println("Specified pile location out of grid.");
+        }
     }
 
     public void display(){
