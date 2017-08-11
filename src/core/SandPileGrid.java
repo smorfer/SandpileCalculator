@@ -106,7 +106,7 @@ public class SandPileGrid {
         display();
     }
 
-    public void setPiles(){
+    public void setAllPiles(){
         Scanner scannerIn = new Scanner(System.in);
         for (int i = 0; i < sandpiles.length;i++){
             if ((i+1) % sidelength == 0){
@@ -117,6 +117,10 @@ public class SandPileGrid {
             }
         }
         scannerIn.close();
+    }
+
+    public void setPile(int col, int row, int amount){
+        sandpiles[col+(sidelength*row)].setSandpile(amount);
     }
 
     public void display(){
