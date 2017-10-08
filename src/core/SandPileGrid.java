@@ -93,8 +93,8 @@ public class SandPileGrid {
             for (Sandpile s : overflowing){
                 s.collapse();
             }
-            display();
-            tobblePrioritized(checkGridOverflow());
+            //tobblePrioritized(checkGridOverflow());
+
         }
 
     }
