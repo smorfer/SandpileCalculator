@@ -70,6 +70,7 @@ public class SandPileGrid {
             else {
                 sandpiles[i].setRelations(sandpiles[i-sideLength],sandpiles[i+sideLength],sandpiles[i+1],sandpiles[i-1]);
             }
+            System.out.println("Linking sandpile No. "+i);
         }
 
     }
@@ -136,5 +137,13 @@ public class SandPileGrid {
             }
         }
         System.out.println();
+    }
+    public int getSandpile(int row, int col){
+        try {
+            return sandpiles[col+(sidelength*row)].getSandpile();
+        }catch (ArrayIndexOutOfBoundsException e){
+            System.out.println("Specified pile location out of grid.");
+            return 0;
+        }
     }
 }
