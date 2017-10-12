@@ -6,7 +6,9 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -16,15 +18,17 @@ public class Displayer extends Application{
 
     static SandPileGrid displayer;
 
+    static boolean startTimer;
     static double offsetX, offsetY;
     static double scale;
     static int amount;
     static Rectangle[] rectangles;
     public static void main(String[] args) {
-        amount = 100000;
-        displayer = new SandPileGrid(199,0);
+        startTimer = false;
+        amount = 0;
+        displayer = new SandPileGrid(299,0);
         displayer.setPile(displayer.sidelength/2,displayer.sidelength/2,amount);
-        scale = 3;
+        scale = 2;
         offsetX = (displayer.sidelength / 2) * (-scale);
         offsetY = offsetX;
         rectangles = new Rectangle[displayer.sandpiles.length];
@@ -35,10 +39,19 @@ public class Displayer extends Application{
 
     @Override
     public void start(Stage primaryStage){
+        Label currentOps = new Label();
+        TextField fillAllInput = new TextField();
+        Button fillAllValidate = new Button("Fill all");
+        TextField rowInput = new TextField();
+        TextField colInput = new TextField();
+        TextField pileInput = new TextField();
+        Button validateInput = new Button("Set Pile");
+        VBox pileSet = new VBox(20,fillAllInput,fillAllValidate, colInput,rowInput,pileInput,validateInput);
         Label Progress = new Label();
         Progress.setText("Progressed "+ (amount-displayer.getSandpile(displayer.sidelength/2,displayer.sidelength/2))+ " of "+amount);
         Button StartButton = new Button("Start");
         Button StopButton = new Button("Stop");
+        Button StepButton = new Button("Step");
         primaryStage.setTitle("Sandpile Displayer");
         BorderPane layout = new BorderPane();
 
@@ -51,7 +64,9 @@ public class Displayer extends Application{
         Group center = new Group(colourFields);
 
         layout.setCenter(center);
-        layout.setTop(new VBox(10,StartButton, StopButton,Progress));
+        layout.setTop(new HBox(20,StartButton, StepButton, StopButton,Progress, currentOps));
+
+        layout.setRight(pileSet);
 
         Scene CalculatorScene = new Scene(layout);
 
@@ -82,8 +97,12 @@ public class Displayer extends Application{
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
+                if (startTimer){
+                    displayer.tobble();
+                }
                 Progress.setText("Progressed "+ displayer.getSandpile(displayer.sidelength/2,displayer.sidelength/2)+ " of "+amount);
-                displayer.tobble();
+                currentOps.setText("Current Ops: " + displayer.currentOps);
+
                 for (int i = 0; i < rectangles.length; i++){
                     rectangles[i].setFill(setColour(displayer.sandpiles[i].getSandpile()));
                 }
@@ -102,12 +121,19 @@ public class Displayer extends Application{
                     colourFields.getChildren().get(i).setLayoutY(offsetY);
                     colourFields.getChildren().get(i).resize(scale,scale);
 
+
                 }
             }
         };
+        timer.start();
         primaryStage.show();
-        StartButton.setOnAction(event -> timer.start());
-        StopButton.setOnAction(event -> timer.stop());
+        StartButton.setOnAction(event -> startTimer= true);
+        StepButton.setOnAction(event -> displayer.tobble());
+        StopButton.setOnAction(event -> startTimer = false);
+        validateInput.setOnAction(event -> {
+            displayer.setPile(isInt(colInput),isInt(rowInput),isInt(pileInput));
+        });
+        fillAllValidate.setOnAction(event -> displayer.setAllPiles(isInt(fillAllInput)));
 
     }
 
@@ -116,14 +142,23 @@ public class Displayer extends Application{
             case 0:
                 return Color.BLACK;
             case 1:
-                return Color.YELLOW;
+                return Color.LIMEGREEN;
             case 2:
-                return Color.BLUE;
+                return Color.TURQUOISE;
             case 3:
-                return Color.RED;
+                return Color.ORANGE;
             default:
                 return Color.MAGENTA;
 
+        }
+    }
+
+    public int isInt(TextField input){
+        try{
+            return Integer.parseInt(input.getText());
+        }catch (NumberFormatException e){
+            System.out.println(e);
+            return 0;
         }
     }
 

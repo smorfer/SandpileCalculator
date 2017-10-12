@@ -11,6 +11,7 @@ import java.util.Scanner;
 public class SandPileGrid {
 
     Sandpile[] sandpiles;
+    int currentOps;
     int sidelength;
 
     public SandPileGrid(int sideLength, int fill){
@@ -57,6 +58,7 @@ public class SandPileGrid {
                 overflowing.add(s);
             }
         }
+        currentOps=overflowing.size();
         return overflowing;
     }
 
@@ -77,17 +79,10 @@ public class SandPileGrid {
         display();
     }
 
-    public void setAllPiles(){
-        Scanner scannerIn = new Scanner(System.in);
+    public void setAllPiles(int in){
         for (int i = 0; i < sandpiles.length;i++){
-            if ((i+1) % sidelength == 0){
-                sandpiles[i].setSandpile(scannerIn.nextInt());
-                System.out.println();
-            }else {
-                sandpiles[i].setSandpile(scannerIn.nextInt());
-            }
+            sandpiles[i].setSandpile(in);
         }
-        scannerIn.close();
     }
 
     public void setPile(int col, int row, int amount){
