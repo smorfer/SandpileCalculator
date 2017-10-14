@@ -10,40 +10,17 @@ import java.util.Scanner;
  */
 public class SandPileGrid {
 
-    Sandpile[] sandpiles;
+    int[] sandpiles;
     int currentOps;
-    int sidelength;
+    int sideLength;
 
     public SandPileGrid(int sideLength, int fill){
-        this.sidelength = sideLength;
-        sandpiles = new Sandpile[(int)Math.pow(sideLength,2)];
+        this.sideLength = sideLength;
+        sandpiles = new int[(int)Math.pow(sideLength,2)];
         for (int i = 0;i < sandpiles.length; i++){
-            sandpiles[i] = new Sandpile(fill);
+            sandpiles[i] = fill;
         }
-        for (int i = 0;i < sandpiles.length; i++){
-            if (i == 0) {
-                sandpiles[i].setRelations(new GridBoundary(),sandpiles[sideLength],sandpiles[i+1],new GridBoundary());
-            }
-            else if (i < sideLength-1){
-                sandpiles[i].setRelations(new GridBoundary(),sandpiles[i+sideLength],sandpiles[i+1],sandpiles[i-1]);
-            }
-            else if ((i+1) % sideLength == 0) {
-                if ((i+1)==Math.pow(sideLength,2)) sandpiles[i].setRelations(sandpiles[i - sideLength], new GridBoundary(), new GridBoundary(), sandpiles[i - 1]);
-                else if (i+1 == sideLength) sandpiles[i].setRelations(new GridBoundary(),sandpiles[i+sideLength],new GridBoundary(),sandpiles[i-1]);
-                else sandpiles[i].setRelations(sandpiles[i-sideLength],sandpiles[i+sideLength],new GridBoundary(),sandpiles[i-1]);
-            }
-            else if (i % sideLength == 0){
-                if (i + sideLength == Math.pow(sideLength,2)) sandpiles[i].setRelations(sandpiles[i-sideLength],new GridBoundary(),sandpiles[i+1],new GridBoundary());
-                else sandpiles[i].setRelations(sandpiles[i-sideLength],sandpiles[i+sideLength],sandpiles[i+1],new GridBoundary());
-            }
-            else if (i < Math.pow(sideLength,2)&& i > Math.pow(sideLength,2)-sideLength) {
-                sandpiles[i].setRelations(sandpiles[i-sideLength],new GridBoundary(),sandpiles[i+1],sandpiles[i-1]);
-            }
-            else {
-                sandpiles[i].setRelations(sandpiles[i-sideLength],sandpiles[i+sideLength],sandpiles[i+1],sandpiles[i-1]);
-            }
-            System.out.println("Linking sandpile No. "+i);
-        }
+
 
     }
 
@@ -51,43 +28,99 @@ public class SandPileGrid {
         tobblePrioritized(checkGridOverflow());
     }
 
-    public ArrayList<Sandpile> checkGridOverflow(){
-        ArrayList<Sandpile> overflowing = new ArrayList<>();
-        for(Sandpile s : sandpiles){
-            if (s.checkOverflow()){
-                overflowing.add(s);
+    public ArrayList<Integer> checkGridOverflow(){
+        ArrayList<Integer> overflowing = new ArrayList<>();
+        for(int i = 0; i < sandpiles.length; i++){
+            if (sandpiles[i] > 3){
+                overflowing.add(i);
             }
         }
         currentOps=overflowing.size();
         return overflowing;
     }
 
-    private void tobblePrioritized(ArrayList<Sandpile> overflowing){
+    private void tobblePrioritized(ArrayList<Integer> overflowing){
         if(!overflowing.isEmpty()){
-            for (Sandpile s : overflowing){
-                s.collapse();
+            for (int i : overflowing){
+                if (i == 0) {
+                    //sandpiles[i].setRelations(new GridBoundary(),sandpiles[sideLength],sandpiles[i+1],new GridBoundary());
+                    addtoRelative(sandpiles,sideLength);
+                    addtoRelative(sandpiles,i+1);
+                }
+                else if (i < sideLength-1){
+                    //sandpiles[i].setRelations(new GridBoundary(),sandpiles[i+sideLength],sandpiles[i+1],sandpiles[i-1]);
+                    addtoRelative(sandpiles,i+sideLength);
+                    addtoRelative(sandpiles,i+1);
+                    addtoRelative(sandpiles, i-1);
+
+                }
+                else if ((i+1) % sideLength == 0) {
+                    if ((i+1)==Math.pow(sideLength,2)){
+                        addtoRelative(sandpiles,i-sideLength);
+                        addtoRelative(sandpiles,i-1);
+                    }//sandpiles[i].setRelations(sandpiles[i - sideLength], new GridBoundary(), new GridBoundary(), sandpiles[i - 1]);
+                    else if (i+1 == sideLength){
+                        addtoRelative(sandpiles,i+sideLength);
+                        addtoRelative(sandpiles,i-1);
+                        //sandpiles[i].setRelations(new GridBoundary(),sandpiles[i+sideLength],new GridBoundary(),sandpiles[i-1]);
+                    }
+                    else{
+                        addtoRelative(sandpiles,i-sideLength);
+                        addtoRelative(sandpiles,i+sideLength);
+                        addtoRelative(sandpiles,i-1);
+                        //sandpiles[i].setRelations(sandpiles[i-sideLength],sandpiles[i+sideLength],new GridBoundary(),sandpiles[i-1]);
+                    }
+                }
+                else if (i % sideLength == 0){
+                    if (i + sideLength == Math.pow(sideLength,2)){
+                        addtoRelative(sandpiles,i-sideLength);
+                        addtoRelative(sandpiles,i+1);
+                        //sandpiles[i].setRelations(sandpiles[i-sideLength],new GridBoundary(),sandpiles[i+1],new GridBoundary());
+                    }
+                    else{
+                        addtoRelative(sandpiles,i-sideLength);
+                        addtoRelative(sandpiles,i+sideLength);
+                        addtoRelative(sandpiles,i+1);
+                        //sandpiles[i].setRelations(sandpiles[i-sideLength],sandpiles[i+sideLength],sandpiles[i+1],new GridBoundary());
+                    }
+                }
+                else if (i < Math.pow(sideLength,2)&& i > Math.pow(sideLength,2)-sideLength) {
+                    addtoRelative(sandpiles,i-sideLength);
+                    addtoRelative(sandpiles,i+1);
+                    addtoRelative(sandpiles,i-1);
+                    //sandpiles[i].setRelations(sandpiles[i-sideLength],new GridBoundary(),sandpiles[i+1],sandpiles[i-1]);
+                }
+                else {
+                    addtoRelative(sandpiles,i-sideLength);
+                    addtoRelative(sandpiles,i+sideLength);
+                    addtoRelative(sandpiles,i+1);
+                    addtoRelative(sandpiles,i-1);
+                    //sandpiles[i].setRelations(sandpiles[i-sideLength],sandpiles[i+sideLength],sandpiles[i+1],sandpiles[i-1]);
+                }
+
+                sandpiles[i] -=4;
             }
 
         }
 
     }
 
-    public void addPile(SandPileGrid sandPileGrid){
+    /*public void addPile(SandPileGrid sandPileGrid){
         for(int i = 0; i < sandpiles.length; i++){
             this.sandpiles[i].setSandpile(sandpiles[i].getSandpile() + sandPileGrid.sandpiles[i].getSandpile());
         }
         display();
-    }
+    }*/
 
     public void setAllPiles(int in){
         for (int i = 0; i < sandpiles.length;i++){
-            sandpiles[i].setSandpile(in);
+            sandpiles[i] = in;
         }
     }
 
     public void setPile(int col, int row, int amount){
         try {
-            sandpiles[col+(sidelength*row)].setSandpile(amount);
+            sandpiles[col+(sideLength*row)] = amount;
         }catch (ArrayIndexOutOfBoundsException e){
             System.out.println("Specified pile location out of grid.");
         }
@@ -95,20 +128,24 @@ public class SandPileGrid {
 
     public void display(){
         for (int i = 0; i < sandpiles.length;i++){
-            if ((i+1) % sidelength == 0){
-                System.out.println(sandpiles[i].getSandpile() + "\n");
+            if ((i+1) % sideLength == 0){
+                System.out.println(sandpiles[i] + "\n");
             }else {
-                System.out.print(sandpiles[i].getSandpile() + "\t");
+                System.out.print(sandpiles[i] + "\t");
             }
         }
         System.out.println();
     }
     public int getSandpile(int row, int col){
         try {
-            return sandpiles[col+(sidelength*row)].getSandpile();
+            return sandpiles[col+(sideLength*row)];
         }catch (ArrayIndexOutOfBoundsException e){
             System.out.println("Specified pile location out of grid.");
             return 0;
         }
+    }
+    public void addtoRelative(int[] sandpiles, int index){
+        sandpiles[index] += 1;
+        //list.set(index,list.get(index)+1);
     }
 }

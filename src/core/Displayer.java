@@ -26,10 +26,10 @@ public class Displayer extends Application{
     public static void main(String[] args) {
         startTimer = false;
         amount = 0;
-        displayer = new SandPileGrid(299,0);
-        displayer.setPile(displayer.sidelength/2,displayer.sidelength/2,amount);
-        scale = 2;
-        offsetX = (displayer.sidelength / 2) * (-scale);
+        displayer = new SandPileGrid(199,0);
+        displayer.setPile(displayer.sideLength/2,displayer.sideLength/2,amount);
+        scale = 3;
+        offsetX = (displayer.sideLength / 2) * (-scale);
         offsetY = offsetX;
         rectangles = new Rectangle[displayer.sandpiles.length];
         launch(args);
@@ -48,7 +48,7 @@ public class Displayer extends Application{
         Button validateInput = new Button("Set Pile");
         VBox pileSet = new VBox(20,fillAllInput,fillAllValidate, colInput,rowInput,pileInput,validateInput);
         Label Progress = new Label();
-        Progress.setText("Progressed "+ (amount-displayer.getSandpile(displayer.sidelength/2,displayer.sidelength/2))+ " of "+amount);
+        Progress.setText("Progressed "+ (amount-displayer.getSandpile(displayer.sideLength/2,displayer.sideLength/2))+ " of "+amount);
         Button StartButton = new Button("Start");
         Button StopButton = new Button("Stop");
         Button StepButton = new Button("Step");
@@ -77,9 +77,9 @@ public class Displayer extends Application{
 
         for (int i = 0; i < rectangles.length; i++){
             if(i!=0){
-                if (i % displayer.sidelength == 0){
+                if (i % displayer.sideLength == 0){
                     offsetY += scale;
-                    offsetX -= scale * (displayer.sidelength-1);
+                    offsetX -= scale * (displayer.sideLength-1);
                 }else {
                     offsetX += scale;
                 }
@@ -91,7 +91,7 @@ public class Displayer extends Application{
         }
 
         for (int i = 0; i < rectangles.length; i++){
-            rectangles[i].setFill(setColour(displayer.sandpiles[i].getSandpile()));
+            rectangles[i].setFill(setColour(displayer.sandpiles[i]));
         }
 
         AnimationTimer timer = new AnimationTimer() {
@@ -100,17 +100,17 @@ public class Displayer extends Application{
                 if (startTimer){
                     displayer.tobble();
                 }
-                Progress.setText("Progressed "+ displayer.getSandpile(displayer.sidelength/2,displayer.sidelength/2)+ " of "+amount);
+                Progress.setText("Progressed "+ displayer.getSandpile(displayer.sideLength/2,displayer.sideLength/2)+ " of "+amount);
                 currentOps.setText("Current Ops: " + displayer.currentOps);
 
                 for (int i = 0; i < rectangles.length; i++){
-                    rectangles[i].setFill(setColour(displayer.sandpiles[i].getSandpile()));
+                    rectangles[i].setFill(setColour(displayer.sandpiles[i]));
                 }
                 for (int i = 0; i < rectangles.length; i++){
                     if(i!=0){
-                        if (i % displayer.sidelength == 0){
+                        if (i % displayer.sideLength == 0){
                             offsetY += scale;
-                            offsetX -= scale * (displayer.sidelength-1);
+                            offsetX -= scale * (displayer.sideLength-1);
                         }else {
                             offsetX += scale;
                         }
@@ -142,11 +142,11 @@ public class Displayer extends Application{
             case 0:
                 return Color.BLACK;
             case 1:
-                return Color.LIMEGREEN;
+                return Color.BLUE;
             case 2:
-                return Color.TURQUOISE;
+                return Color.YELLOW;
             case 3:
-                return Color.ORANGE;
+                return Color.RED;
             default:
                 return Color.MAGENTA;
 
