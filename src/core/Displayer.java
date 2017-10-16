@@ -18,6 +18,7 @@ public class Displayer extends Application{
 
     static SandPileGrid displayer;
 
+    static boolean isRendering;
     static boolean startTimer;
     static double offsetX, offsetY;
     static double scale;
@@ -25,10 +26,11 @@ public class Displayer extends Application{
     static Rectangle[] rectangles;
     public static void main(String[] args) {
         startTimer = false;
+        isRendering = true;
         amount = 0;
-        displayer = new SandPileGrid(199,0);
+        displayer = new SandPileGrid(7,0);
         displayer.setPile(displayer.sideLength/2,displayer.sideLength/2,amount);
-        scale = 3;
+        scale = 50;
         offsetX = (displayer.sideLength / 2) * (-scale);
         offsetY = offsetX;
         rectangles = new Rectangle[displayer.sandpiles.length];
@@ -41,6 +43,7 @@ public class Displayer extends Application{
     public void start(Stage primaryStage){
         Label currentOps = new Label();
         TextField fillAllInput = new TextField();
+        Button toggleRendering = new Button("Toggle Rendering");
         Button fillAllValidate = new Button("Fill all");
         TextField rowInput = new TextField();
         TextField colInput = new TextField();
@@ -64,7 +67,7 @@ public class Displayer extends Application{
         Group center = new Group(colourFields);
 
         layout.setCenter(center);
-        layout.setTop(new HBox(20,StartButton, StepButton, StopButton,Progress, currentOps));
+        layout.setTop(new HBox(20,StartButton, StepButton, StopButton, toggleRendering,Progress, currentOps));
 
         layout.setRight(pileSet);
 
@@ -100,29 +103,32 @@ public class Displayer extends Application{
                 if (startTimer){
                     displayer.tobble();
                 }
-                Progress.setText("Progressed "+ displayer.getSandpile(displayer.sideLength/2,displayer.sideLength/2)+ " of "+amount);
+                //Progress.setText();
                 currentOps.setText("Current Ops: " + displayer.currentOps);
 
-                for (int i = 0; i < rectangles.length; i++){
-                    rectangles[i].setFill(setColour(displayer.sandpiles[i]));
-                }
-                for (int i = 0; i < rectangles.length; i++){
-                    if(i!=0){
-                        if (i % displayer.sideLength == 0){
-                            offsetY += scale;
-                            offsetX -= scale * (displayer.sideLength-1);
-                        }else {
-                            offsetX += scale;
-                        }
+                if(isRendering) {
+                    for (int i = 0; i < rectangles.length; i++){
+                        rectangles[i].setFill(setColour(displayer.sandpiles[i]));
                     }
+                    for (int i = 0; i < rectangles.length; i++){
+                        if(i!=0){
+                            if (i % displayer.sideLength == 0){
+                                offsetY += scale;
+                                offsetX -= scale * (displayer.sideLength-1);
+                            }else {
+                                offsetX += scale;
+                            }
+                        }
 
 
-                    colourFields.getChildren().get(i).setLayoutX(offsetX);
-                    colourFields.getChildren().get(i).setLayoutY(offsetY);
-                    colourFields.getChildren().get(i).resize(scale,scale);
+                        colourFields.getChildren().get(i).setLayoutX(offsetX);
+                        colourFields.getChildren().get(i).setLayoutY(offsetY);
+                        colourFields.getChildren().get(i).resize(scale,scale);
 
 
+                    }
                 }
+
             }
         };
         timer.start();
@@ -130,6 +136,7 @@ public class Displayer extends Application{
         StartButton.setOnAction(event -> startTimer= true);
         StepButton.setOnAction(event -> displayer.tobble());
         StopButton.setOnAction(event -> startTimer = false);
+        toggleRendering.setOnAction(event -> isRendering = !isRendering);
         validateInput.setOnAction(event -> {
             displayer.setPile(isInt(colInput),isInt(rowInput),isInt(pileInput));
         });

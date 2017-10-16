@@ -1,7 +1,6 @@
 package core;
 
 import java.util.ArrayList;
-import java.util.Scanner;
 
 /**
  * The handler class of the Sandpilegrid.
@@ -105,12 +104,11 @@ public class SandPileGrid {
 
     }
 
-    /*public void addPile(SandPileGrid sandPileGrid){
+    public void addPile(SandPileGrid sandPileGrid){
         for(int i = 0; i < sandpiles.length; i++){
-            this.sandpiles[i].setSandpile(sandpiles[i].getSandpile() + sandPileGrid.sandpiles[i].getSandpile());
+            this.sandpiles[i] += sandPileGrid.sandpiles[i];
         }
-        display();
-    }*/
+    }
 
     public void setAllPiles(int in){
         for (int i = 0; i < sandpiles.length;i++){
