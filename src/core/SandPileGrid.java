@@ -19,8 +19,6 @@ public class SandPileGrid {
         for (int i = 0;i < sandpiles.length; i++){
             sandpiles[i] = fill;
         }
-
-
     }
 
     public void tobble(){
@@ -134,7 +132,7 @@ public class SandPileGrid {
         }
         System.out.println();
     }
-    public int getSandpile(int row, int col){
+    public int getSandpile(int col, int row){
         try {
             return sandpiles[col+(sideLength*row)];
         }catch (ArrayIndexOutOfBoundsException e){
@@ -144,6 +142,30 @@ public class SandPileGrid {
     }
     public void addtoRelative(int[] sandpiles, int index){
         sandpiles[index] += 1;
-        //list.set(index,list.get(index)+1);
+    }
+
+    public int calculateIdentity(int col, int row, int amount){
+        setPile(col, row, amount);
+        return amount - 3;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        for (int i = 0; i < this.sandpiles.length; i++){
+            if(this.sandpiles[i] != ((SandPileGrid)obj).sandpiles[i]){
+                return false;
+            }
+
+        }
+        return true;
+    }
+
+    @Override
+    protected SandPileGrid clone() {
+        SandPileGrid clonedGrid = new SandPileGrid(sideLength,0);
+        for (int i = 0;i < this.sandpiles.length; i++){
+            clonedGrid.sandpiles[i] = this.sandpiles[i];
+        }
+        return clonedGrid;
     }
 }
