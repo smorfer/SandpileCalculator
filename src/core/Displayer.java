@@ -17,26 +17,24 @@ import javafx.stage.Stage;
 public class Displayer extends Application{
 
     static SandPileGrid displayer;
-    static SandPileGrid compareGrid;
 
+
+    static Thread t;
     static boolean isRendering;
     static boolean startTimer;
-    static boolean startIdentCalc;
+
     static double offsetX, offsetY;
     static double scale;
     static int amount;
-    static int Identity;
-    static int identityRuns;
+
+
     static Rectangle[] rectangles;
     public static void main(String[] args) {
-        Identity = 0;
-        identityRuns = 0;
+
         startTimer = false;
         isRendering = true;
-        startIdentCalc = false;
         amount = 0;
-        displayer = new SandPileGrid(499,0);
-        displayer.setPile(displayer.sideLength/2,displayer.sideLength/2,amount);
+        displayer = new SandPileGrid(9,0);
         scale = (int) (600.0/displayer.sideLength);
         offsetX = (displayer.sideLength / 2) * (-scale);
         offsetY = offsetX;
@@ -48,6 +46,7 @@ public class Displayer extends Application{
 
     @Override
     public void start(Stage primaryStage){
+        t = new Thread(displayer);
         Label currentOps = new Label();
         TextField fillAllInput = new TextField();
         Button toggleRendering = new Button("Toggle Rendering");
@@ -59,7 +58,7 @@ public class Displayer extends Application{
         Button IdentCalcButton = new Button("Calculate Identity");
         VBox pileSet = new VBox(20,fillAllInput,fillAllValidate, colInput,rowInput,pileInput,validateInput, IdentCalcButton);
         Label Progress = new Label();
-        Progress.setText("Needed Runs: " + identityRuns);
+        Progress.setText("Needed Runs: " + displayer.identityRuns);
         Button StartButton = new Button("Start");
         Button StopButton = new Button("Stop");
         Button StepButton = new Button("Step");
@@ -109,50 +108,36 @@ public class Displayer extends Application{
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                if (startTimer){
-                    if (startIdentCalc && displayer.currentOps == 0){
-                        Identity += displayer.calculateIdentity(isInt(colInput),isInt(rowInput),isInt(pileInput));
-                        identityRuns++;
-                    }
-                    displayer.tobble();
-
-
-                    try {
-                        if (displayer.equals(compareGrid) && displayer.currentOps == 0 && startIdentCalc){
-                            startIdentCalc = !startIdentCalc;
-                            displayer.setAllPiles(0);
-                            displayer.setPile(isInt(colInput),isInt(rowInput),Identity+displayer.getSandpile(isInt(colInput),isInt(rowInput)));
-                        }
-                    } catch (Exception e) {
-                    }
-
-
-                }
-                //Progress.setText();
                 currentOps.setText("Current Ops: " + displayer.currentOps);
-                Progress.setText("Needed Runs: " + identityRuns);
+                Progress.setText("Needed Runs: " + displayer.identityRuns);
 
-                if(isRendering) {
+                if(!displayer.isRenderingRequested ) {
                     for (int i = 0; i < rectangles.length; i++){
-                        rectangles[i].setFill(setColour(displayer.sandpiles[i]));
+                        rectangles[i].setFill(setColour(displayer.displayBuffer[i]));
                     }
 
+                } else if (!t.isAlive()){
+                    displayer.isRenderingRequested = displayer.updateDisplayBuffer(true);
                 }
 
             }
         };
         timer.start();
         primaryStage.show();
-        StartButton.setOnAction(event -> startTimer= true);
+        StartButton.setOnAction(event -> {
+            t = new Thread(displayer);
+            t.start();
+        });
         StepButton.setOnAction(event -> displayer.tobble());
-        StopButton.setOnAction(event -> startTimer = false);
-        toggleRendering.setOnAction(event -> isRendering = !isRendering);
+        StopButton.setOnAction(event -> t.stop());
+        toggleRendering.setOnAction(event -> displayer.isRenderingRequested = true);
         validateInput.setOnAction(event -> displayer.setPile(isInt(colInput),isInt(rowInput),isInt(pileInput)));
         IdentCalcButton.setOnAction(event -> {
-            Identity = 0;
-            compareGrid = displayer.clone();
-            identityRuns = 0;
-            startIdentCalc = !startIdentCalc;
+            displayer.getInput(isInt(colInput),isInt(rowInput),isInt(pileInput));
+            displayer.Identity = 0;
+            displayer.compareGrid = displayer.clone();
+            displayer.identityRuns = 0;
+            displayer.startIdentCalc = !displayer.startIdentCalc;
         });
         fillAllValidate.setOnAction(event -> displayer.setAllPiles(isInt(fillAllInput)));
 
@@ -182,6 +167,12 @@ public class Displayer extends Application{
             return 0;
         }
     }
+    public void fullTobbling(){
+        do {
+            displayer.tobble();
+        }while (displayer.currentOps != 0);
+    }
+
 
 
 }

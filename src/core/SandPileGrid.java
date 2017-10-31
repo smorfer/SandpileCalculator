@@ -7,18 +7,60 @@ import java.util.ArrayList;
  * Is the part of the Program, the Main class interacts with.
  * Combines the little classes into the abstract definition of a Sandpilegrid.
  */
-public class SandPileGrid {
+public class SandPileGrid implements Runnable{
 
+    @Override
+    public void run() {
+
+        do {
+            if(startIdentCalc){
+                if (startIdentCalc && currentOps == 0){
+
+                    Identity += calculateIdentity(inputPackage.getColumnInput(),inputPackage.getRowInput(),inputPackage.getAmountInput());
+                    identityRuns++;
+                }
+                tobble();
+
+                try {
+                    if (equals(compareGrid) && currentOps == 0 && startIdentCalc){
+                        startIdentCalc = !startIdentCalc;
+                        setAllPiles(0);
+                        setPile(inputPackage.getColumnInput(),inputPackage.getRowInput(),Identity+getSandpile(inputPackage.getColumnInput(),inputPackage.getRowInput()));
+                    }
+                } catch (Exception e) {
+                }
+
+            } else {
+                tobble();
+            }
+
+        }while (currentOps != 0 || startIdentCalc);
+        updateDisplayBuffer(true);
+    }
+
+    boolean startIdentCalc;
+    boolean isRenderingRequested;
     int[] sandpiles;
+    int[] displayBuffer;
+    int Identity;
+    int identityRuns;
     int currentOps;
     int sideLength;
 
+    UserInputPackage inputPackage;
+    SandPileGrid compareGrid;
+
     public SandPileGrid(int sideLength, int fill){
+        identityRuns = 0;
+        startIdentCalc = false;
+        Identity = 0;
         this.sideLength = sideLength;
         sandpiles = new int[(int)Math.pow(sideLength,2)];
+        displayBuffer = new int[(int)Math.pow(sideLength,2)];
         for (int i = 0;i < sandpiles.length; i++){
             sandpiles[i] = fill;
         }
+
     }
 
     public void tobble(){
@@ -97,6 +139,7 @@ public class SandPileGrid {
 
                 sandpiles[i] -=4;
             }
+            isRenderingRequested = updateDisplayBuffer(isRenderingRequested);
 
         }
 
@@ -148,6 +191,19 @@ public class SandPileGrid {
         setPile(col, row, amount);
         return amount - 3;
     }
+
+    public boolean updateDisplayBuffer(boolean updateRequested){
+        if(updateRequested){
+            for (int i = 0; i < sandpiles.length;i++){
+                displayBuffer[i] = sandpiles[i];
+            }
+        }
+        return false;
+    }
+    public void getInput(int colInput, int rowInput, int amountInput){
+        inputPackage = new UserInputPackage(colInput,rowInput,amountInput);
+    }
+
 
     @Override
     public boolean equals(Object obj) {
