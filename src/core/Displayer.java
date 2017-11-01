@@ -20,6 +20,7 @@ public class Displayer extends Application{
 
 
     static Thread t;
+    static boolean isLiveRendering;
     static boolean isRendering;
     static boolean startTimer;
 
@@ -30,11 +31,11 @@ public class Displayer extends Application{
 
     static Rectangle[] rectangles;
     public static void main(String[] args) {
-
+        isLiveRendering = false;
         startTimer = false;
         isRendering = true;
         amount = 0;
-        displayer = new SandPileGrid(9,0);
+        displayer = new SandPileGrid(99,0);
         scale = (int) (600.0/displayer.sideLength);
         offsetX = (displayer.sideLength / 2) * (-scale);
         offsetY = offsetX;
@@ -50,6 +51,7 @@ public class Displayer extends Application{
         Label currentOps = new Label();
         TextField fillAllInput = new TextField();
         Button toggleRendering = new Button("Toggle Rendering");
+        Button toggleLiveRendering = new Button("Live Rendering");
         Button fillAllValidate = new Button("Fill all");
         TextField rowInput = new TextField();
         TextField colInput = new TextField();
@@ -75,7 +77,7 @@ public class Displayer extends Application{
         Group center = new Group(colourFields);
 
         layout.setCenter(center);
-        layout.setTop(new HBox(20,StartButton, StepButton, StopButton, toggleRendering,Progress, currentOps));
+        layout.setTop(new HBox(20,StartButton, StepButton, StopButton, toggleRendering, toggleLiveRendering,Progress, currentOps));
 
         layout.setRight(pileSet);
 
@@ -111,11 +113,14 @@ public class Displayer extends Application{
                 currentOps.setText("Current Ops: " + displayer.currentOps);
                 Progress.setText("Needed Runs: " + displayer.identityRuns);
 
-                if(!displayer.isRenderingRequested ) {
+                if(isLiveRendering) {
+                    for (int i = 0; i < rectangles.length; i++){
+                    rectangles[i].setFill(setColour(displayer.sandpiles[i]));
+                    }
+                }else if (!displayer.isRenderingRequested){
                     for (int i = 0; i < rectangles.length; i++){
                         rectangles[i].setFill(setColour(displayer.displayBuffer[i]));
                     }
-
                 } else if (!t.isAlive()){
                     displayer.isRenderingRequested = displayer.updateDisplayBuffer(true);
                 }
@@ -131,14 +136,9 @@ public class Displayer extends Application{
         StepButton.setOnAction(event -> displayer.tobble());
         StopButton.setOnAction(event -> t.stop());
         toggleRendering.setOnAction(event -> displayer.isRenderingRequested = true);
+        toggleLiveRendering.setOnAction(event -> isLiveRendering = ! isLiveRendering);
         validateInput.setOnAction(event -> displayer.setPile(isInt(colInput),isInt(rowInput),isInt(pileInput)));
-        IdentCalcButton.setOnAction(event -> {
-            displayer.getInput(isInt(colInput),isInt(rowInput),isInt(pileInput));
-            displayer.Identity = 0;
-            displayer.compareGrid = displayer.clone();
-            displayer.identityRuns = 0;
-            displayer.startIdentCalc = !displayer.startIdentCalc;
-        });
+        IdentCalcButton.setOnAction(event -> displayer.startIdentityCalculation(isInt(colInput),isInt(rowInput),isInt(pileInput)));
         fillAllValidate.setOnAction(event -> displayer.setAllPiles(isInt(fillAllInput)));
 
     }

@@ -192,6 +192,14 @@ public class SandPileGrid implements Runnable{
         return amount - 3;
     }
 
+    public void startIdentityCalculation(int col, int row, int amount){
+        getInput(col,row,amount);
+        Identity = 0;
+        compareGrid = clone();
+        identityRuns = 0;
+        startIdentCalc = !startIdentCalc;
+    }
+
     public boolean updateDisplayBuffer(boolean updateRequested){
         if(updateRequested){
             for (int i = 0; i < sandpiles.length;i++){
